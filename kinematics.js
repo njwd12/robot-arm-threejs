@@ -1,14 +1,15 @@
 class Kinematics {
     static getDHParameters() {
         return [
-            { a: 0, alpha: -Math.PI/2, d: 0.5, theta: 0 },
-            { a: 1, alpha: 0, d: 0, theta: -Math.PI/2 },
-            { a: 1, alpha: 0, d: 0, theta: 0 },
-            { a: 0, alpha: -Math.PI/2, d: 0.5, theta: -Math.PI/2 },
-            { a: 0, alpha: Math.PI/2, d: 0, theta: 0 },
-            { a: 0, alpha: 0, d: 0.3, theta: 0 }
+            { a: 0,   alpha: -Math.PI/2, d: 30,  theta: 0 },          // Joint 1 (Base)
+            { a: 0,   alpha: 0,          d: 0,   theta: -Math.PI/2 }, // Joint 2 (Shoulder)
+            { a: 120, alpha: 0,          d: 0,   theta: 0 },          // Joint 3 (Elbow)
+            { a: 80,  alpha: 0,          d: 0,   theta: 0 },          // Joint 4 (Wrist)
+            { a: 0,   alpha: -Math.PI/2, d: 0,   theta: 0 },          // Joint 5 (Wrist rot)
+            { a: 0,   alpha: 0,          d: 30,  theta: 0 },          // Joint 6 (Gripper)
         ];
     }
+    
     
     static dhToMatrix(a, alpha, d, theta) {
         const cosTheta = Math.cos(theta);
@@ -23,6 +24,10 @@ class Kinematics {
             0, 0, 0, 1
         );
     }
+
+ 
+
+
     
     static forwardKinematics(jointAngles) {
         const dhParams = this.getDHParameters();

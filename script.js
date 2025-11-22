@@ -20,9 +20,9 @@ function createScene() {
 }
 
 function setupCamera() {
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(150, 100, 150);
-    camera.lookAt(0, 50, 0);
+    camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(200, 450, 150);
+    camera.lookAt(0, 0, 0);
 }
 
 function setupRenderer() {
@@ -45,7 +45,7 @@ function setupControls() {
 }
 
 function setupLighting() {
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(ambientLight);
 
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
@@ -259,14 +259,16 @@ function setupUI() {
 
 function setupSliders() {
     const slidersContainer = document.getElementById('sliders-container');
-    
     const jointConfigs = [
-        { id: 'base', label: 'Основа (Base)', min: -Math.PI, max: Math.PI, step: 0.01, value: 0 },
+        { id: 'base', label: 'Основа (Base)',  min: -Math.PI, max: Math.PI,step: 0.01, value: 0 },
         { id: 'shoulder', label: 'Рамо (Shoulder)', min: -Math.PI, max: Math.PI, step: 0.01, value: 0 },
         { id: 'elbow', label: 'Лакот (Elbow)', min: -Math.PI/2, max: Math.PI/2, step: 0.01, value: 0 },
-        { id: 'wrist', label: 'Зглоб (Wrist)', min: -Math.PI, max: Math.PI, step: 0.01, value: 0 },
+        { id: 'wristX', label: 'Wrist Pitch (X)', min: -Math.PI/2, max: Math.PI/2, step: 0.01, value: 0 },
+        { id: 'wristY', label: 'Wrist Yaw (Y)', min: -Math.PI, max: Math.PI, step: 0.01, value: 0 },
+        { id: 'wristZ', label: 'Wrist Roll (Z)', min: -Math.PI, max: Math.PI, step: 0.01, value: 0 },
         { id: 'gripper', label: 'Грабнувач (Gripper)', min: 0, max: 1, step: 0.01, value: 0.5 }
     ];
+    
 
     slidersContainer.innerHTML = jointConfigs.map(config => `
         <div class="slider-group">
