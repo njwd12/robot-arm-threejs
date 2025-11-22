@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="mk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Симулатор на Роботска Рака</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- THREE.JS И ДОДАТОЦИ -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/dat.gui.min.js"></script>
+</head>
+<body>
+    <div id="container">
+        <div id="scene-container">
+            <div id="loading">
+                <div class="loading-spinner"></div>
+                <div>Вчитување на роботската рака...</div>
+            </div>
+        </div>
+        
+        <div id="control-panel">
+            <div class="panel-header">
+                <h1>🤖 Роботска Рака Simulator</h1>
+                <h2>3D Симулација со Директна и Инверзна Кинематика</h2>
+            </div>
+
+            <div class="section">
+                <h3>🎛 Контрола на Зглобови</h3>
+                <div id="sliders-container"></div>
+            </div>
+
+            <div class="section">
+                <h3>🎯 Инверзна Кинематика</h3>
+                <div class="ik-controls">
+                    <div class="input-group">
+                        <label for="ik-x">X позиција:</label>
+                        <input type="number" id="ik-x" step="0.1" value="1.5">
+                    </div>
+                    <div class="input-group">
+                        <label for="ik-y">Y позиција:</label>
+                        <input type="number" id="ik-y" step="0.1" value="1.0">
+                    </div>
+                    <div class="input-group">
+                        <label for="ik-z">Z позиција:</label>
+                        <input type="number" id="ik-z" step="0.1" value="1.5">
+                    </div>
+                    <div class="input-group">
+                        <label for="ik-roll">Roll (°):</label>
+                        <input type="number" id="ik-roll" step="1" value="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="ik-pitch">Pitch (°):</label>
+                        <input type="number" id="ik-pitch" step="1" value="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="ik-yaw">Yaw (°):</label>
+                        <input type="number" id="ik-yaw" step="1" value="0">
+                    </div>
+                    <div class="ik-buttons">
+                        <button id="solve-ik" class="preset-btn">Реши IK</button>
+                        <button id="animate-ik" class="preset-btn">Анимирај</button>
+                        <button id="reset-ik" class="preset-btn">Ресетирај</button>
+                    </div>
+                    <div id="ik-status" class="status-message"></div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>📍 Позиција на Крајниот Ефектор</h3>
+                <div class="data-grid" id="end-effector-data"></div>
+            </div>
+
+            <div class="section">
+                <h3>📐 Ориентација на Крајниот Ефектор</h3>
+                <div class="data-grid" id="orientation-data"></div>
+            </div>
+
+            <div class="section">
+                <h3>🔄 Агли на Зглобовите</h3>
+                <div class="joint-angles" id="joint-angles"></div>
+            </div>
+
+            <div class="section">
+                <h3>📊 Информации за Инверзна Кинематика</h3>
+                <div id="ik-info">
+                    <div class="info-item">
+                        <span class="info-label">Број на решенија:</span>
+                        <span id="solution-count">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Тековно решение:</span>
+                        <span id="current-solution">1</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Грешка:</span>
+                        <span id="ik-error">0.000</span>
+                    </div>
+                    <div class="solution-nav">
+                        <button id="prev-solution" class="nav-btn">← Претходно</button>
+                        <button id="next-solution" class="nav-btn">Следно →</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-text">
+                Користи го глувчето за да ротираш, зумираш и панорамираш во 3D просторот
+            </div>
+        </div>
+    </div>
+
+    <!-- BEZ type="module" -->
+    <script src="kinematics.js"></script>
+    <script src="robot.js"></script>
+    <script src="inverse-kinematics.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

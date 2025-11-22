@@ -1,0 +1,16 @@
+{
+  "name": "robot-simulator",
+  "version": "1.0.0",
+  "description": "Овој проект претставува **целосен 3D веб симулатор на роботска рака** развиен со **Three.js**, кој имплементира и **директна и инверзна кинематика**. Симулаторот овозможува визуелизација, контрола и анализа на движењата на роботска рака во реално време.",
+  "main": "api-server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "three": "^0.181.2",
+    "three-stdlib": "^2.36.1"
+  }
+}
