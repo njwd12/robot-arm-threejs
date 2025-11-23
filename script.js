@@ -122,7 +122,7 @@ function setupIKControls() {
     
     if (solveButton) {
         solveButton.addEventListener('click', function() {
-            console.log('🎯 Solve IK кликнато');
+            console.log(' Solve IK кликнато');
             solveIK();
         });
         console.log('✅ solveButton event listener додаден');
@@ -130,7 +130,7 @@ function setupIKControls() {
     
     if (animateButton) {
         animateButton.addEventListener('click', function() {
-            console.log('🎬 Animate IK кликнато');
+            console.log(' Animate IK кликнато');
             if (window.animateIK) {
                 console.log('✅ animateIK постои, викам...');
                 animateIK();
@@ -151,21 +151,23 @@ function setupIKControls() {
     
     if (prevSolutionButton) {
         prevSolutionButton.addEventListener('click', function() {
-            console.log('⬅️ Previous Solution кликнато');
+            console.log('⬅ Previous Solution кликнато');
             previousSolution();
         });
     }
     
     if (nextSolutionButton) {
         nextSolutionButton.addEventListener('click', function() {
-            console.log('➡️ Next Solution кликнато');
+            console.log(' Next Solution кликнато');
             nextSolution();
         });
     }
     
     console.log('✅ IK контролите се поставени');
 }
+
 function solveIK() {
+
     // ПРОВЕРКА ДАЛИ ИНВЕРЗНАТА КИНЕМАТИКА Е ИНИЦИЈАЛИЗИРАНА
     if (!inverseKinematics) {
         console.error('Инверзна кинематика не е иницијализирана!');
@@ -173,6 +175,7 @@ function solveIK() {
         return;
     }
     
+
     const x = parseFloat(document.getElementById('ik-x').value);
     const y = parseFloat(document.getElementById('ik-y').value);
     const z = parseFloat(document.getElementById('ik-z').value);
@@ -200,14 +203,14 @@ function solveIK() {
 }
 
 function animateIK() {
-    console.log('🎬 animateIK() ФУНКЦИЈАТА СЕ ВИКА!');
+    console.log(' animateIK() ФУНКЦИЈАТА СЕ ВИКА!');
     
     if (!inverseKinematics) {
         console.error('❌ Инверзна кинематика не е иницијализирана!');
         return;
     }
     
-    console.log('🔍 Проверка на IK состојба:');
+    console.log(' Проверка на IK состојба:');
     console.log('- Број на решенија:', inverseKinematics.solutions.length);
     console.log('- Анимација во тек:', inverseKinematics.animationInProgress);
     
@@ -261,6 +264,7 @@ function setupSliders() {
     const slidersContainer = document.getElementById('sliders-container');
     const jointConfigs = [
         { id: 'base', label: 'Основа (Base)',  min: -Math.PI, max: Math.PI,step: 0.01, value: 0 },
+        { id: 'base-link-upper', label: 'Горна Основа (Base)',  min: -Math.PI, max: Math.PI,step: 0.01, value: 0 },
         { id: 'shoulder', label: 'Рамо (Shoulder)', min: -Math.PI, max: Math.PI, step: 0.01, value: 0 },
         { id: 'elbow', label: 'Лакот (Elbow)', min: -Math.PI/2, max: Math.PI/2, step: 0.01, value: 0 },
         { id: 'wristX', label: 'Wrist Pitch (X)', min: -Math.PI/2, max: Math.PI/2, step: 0.01, value: 0 },
@@ -269,7 +273,6 @@ function setupSliders() {
         { id: 'gripper', label: 'Грабнувач (Gripper)', min: 0, max: 1, step: 0.01, value: 0.5 }
     ];
     
-
     slidersContainer.innerHTML = jointConfigs.map(config => `
         <div class="slider-group">
             <label for="${config.id}">${config.label}</label>
@@ -311,7 +314,7 @@ function setupSliders() {
     const presetSection = document.createElement('div');
     presetSection.className = 'section';
     presetSection.innerHTML = `
-        <h3>🎯 Пред-дефинирани Пози</h3>
+        <h3> Пред-дефинирани Пози</h3>
         <div class="preset-buttons">
             <button class="preset-btn" onclick="setPresetPose('home')">Дома</button>
             <button class="preset-btn" onclick="setPresetPose('extended')">Испружена</button>
@@ -325,12 +328,11 @@ function setupSliders() {
     
     console.log('Лизгачите се поставени');
 }
-
 const presetPoses = {
-    home: { base: 0, shoulder: 0, elbow: 0, wrist: 0, gripper: 0.5 },
-    extended: { base: Math.PI/4, shoulder: -Math.PI/6, elbow: Math.PI/3, wrist: -Math.PI/6, gripper: 0.8 },
-    folded: { base: -Math.PI/4, shoulder: Math.PI/4, elbow: -Math.PI/4, wrist: Math.PI/8, gripper: 0.2 },
-    pickup: { base: Math.PI/2, shoulder: -Math.PI/8, elbow: Math.PI/4, wrist: -Math.PI/8, gripper: 0.3 }
+    home: { base: 0, base_link_upper: 0, shoulder: 0, elbow: 0, wrist: 0, gripper: 0.5 },
+    extended: { base: Math.PI/4, base_link_upper: Math.PI/8, shoulder: -Math.PI/6, elbow: Math.PI/3, wrist: -Math.PI/6, gripper: 0.8 },
+    folded: { base: -Math.PI/4, base_link_upper: -Math.PI/8, shoulder: Math.PI/4, elbow: -Math.PI/4, wrist: Math.PI/8, gripper: 0.2 },
+    pickup: { base: Math.PI/2, base_link_upper: Math.PI/6, shoulder: -Math.PI/8, elbow: Math.PI/4, wrist: -Math.PI/8, gripper: 0.3 }
 };
 
 function setPresetPose(presetName) {
