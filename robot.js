@@ -54,7 +54,6 @@ class RobotArm {
                     shininess: 50,
                     specular: 0x222222
                 }),
-               
                 darkMetal: new THREE.MeshPhongMaterial({ 
                     color: 0x4A4A4A, // Темно сива
                     shininess: 45
