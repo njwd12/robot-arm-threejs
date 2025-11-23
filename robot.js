@@ -5,12 +5,9 @@ class RobotArm {
         this.joints = {};
         this.angles = {
             base: 0,
-            base_link_upper: 0,
             shoulder: 0,
             elbow: 0,
-            wristX: 0,
-            wristY: 0,
-            wristZ: 0,
+            wrist: 0,
             gripper: 0.5
         };
         
@@ -21,70 +18,65 @@ class RobotArm {
     }
 
     initMaterials() {
-      
-            this.materials = {
-                
-                base: new THREE.MeshPhongMaterial({ 
-                    color: 0x2E86AB, // Синкаво-сива
-                    shininess: 70,
-                    specular: 0x444444
-                }),
-                shoulder: new THREE.MeshPhongMaterial({ 
-                    color: 0xF9C80E, // ЖОЛТА! 🟡
-                    shininess: 65,
-                    specular: 0x333333
-                }),
-                elbow: new THREE.MeshPhongMaterial({ 
-                    color: 0xF18F01, // Портокалова
-                    shininess: 60,
-                    specular: 0x222222
-                }),
-                wrist: new THREE.MeshPhongMaterial({ 
-                    color: 0xC73E1D, // Црвено-кафеава
-                    shininess: 55,
-                    specular: 0x222222
-                }),
-                gripper: new THREE.MeshPhongMaterial({ 
-                    color: 0xCC3333, // Јарко црвена
-                    shininess: 40,
-                    specular: 0x111111
-                }),
-                accent: new THREE.MeshPhongMaterial({ 
-                    color: 0x3BB273, // Зелена
-                    shininess: 50,
-                    specular: 0x222222
-                }),
-                darkMetal: new THREE.MeshPhongMaterial({ 
-                    color: 0x4A4A4A, // Темно сива
-                    shininess: 45
-                }),
-                lightMetal: new THREE.MeshPhongMaterial({ 
-                    color: 0xAAAAAA, // Светло сива  
-                    shininess: 75,
-                    specular: 0x555555
-                }),
-                // Нова жолта боја
-                yellow: new THREE.MeshPhongMaterial({ 
-                    color: 0xFFD700, // Златна жолта
-                    shininess: 80,
-                    specular: 0x666666
-                })
-            };
-        }
+        this.materials = {
+            // Нови бои за секој дел
+            base: new THREE.MeshPhongMaterial({ 
+                color: 0x2E86AB, // Синкаво-сива за основата
+                shininess: 70,
+                specular: 0x444444
+            }),
+            shoulder: new THREE.MeshPhongMaterial({ 
+                color: 0xF9C80E, // ЖОЛТА за рамото 🟡
+                shininess: 65,
+                specular: 0x333333
+            }),
+            elbow: new THREE.MeshPhongMaterial({ 
+                color: 0xF18F01, // Портокалова за лакот
+                shininess: 60,
+                specular: 0x222222
+            }),
+            wrist: new THREE.MeshPhongMaterial({ 
+                color: 0xC73E1D, // Црвено-кафеава за зглобот
+                shininess: 55,
+                specular: 0x222222
+            }),
+            gripper: new THREE.MeshPhongMaterial({ 
+                color: 0xCC3333, // Јарко црвена за грабнувачот
+                shininess: 40,
+                specular: 0x111111
+            }),
+            accent: new THREE.MeshPhongMaterial({ 
+                color: 0x3BB273, // Зелена за горната основа
+                shininess: 50,
+                specular: 0x222222
+            }),
+            // Стари бои за компатибилност
+            metal: new THREE.MeshPhongMaterial({ 
+                color: 0x888888, 
+                shininess: 60,
+                specular: 0x222222
+            }),
+            darkMetal: new THREE.MeshPhongMaterial({ 
+                color: 0x555555, 
+                shininess: 50 
+            })
+        };
+    }
 
     init() {
         this.joints = {
             base: new THREE.Group(),
-            base_link_upper: new THREE.Group(),
             shoulder: new THREE.Group(),
             elbow: new THREE.Group(),
             wrist: new THREE.Group(),
-            gripper: new THREE.Group()
+            wrist1: new THREE.Group(),
+            gripper: new THREE.Group(),
+            base_link_upper: new THREE.Group()
         };
 
+        // Основата стои на подот
         this.joints.base.position.set(0, 0, 0);
         this.scene.add(this.joints.base);
-        this.joints.base.add(this.joints.base_link_upper);
     }
 
     loadModels() {
@@ -103,6 +95,7 @@ class RobotArm {
                     this.resetPose();
                     resolve();
 
+                    // Scroll control за грабнувач
                     let scrollGripperOffset = this.angles.gripper;
                     window.addEventListener("wheel", (e) => {
                         if (!this.parts.gripper_part_left || !this.parts.gripper_part_right) return;
@@ -142,18 +135,13 @@ class RobotArm {
         return new Promise((resolve, reject) => {
             this.loader.load('models/base_link_upper.stl', (geometry) => {
                 const mesh = new THREE.Mesh(geometry, this.materials.accent); // ПРОМЕНЕТО
-                
-                mesh.position.set(0, 0, 0);
+                mesh.position.set(40, 5, 40);
                 mesh.rotation.set(THREE.MathUtils.degToRad(-90), THREE.MathUtils.degToRad(-45), 0);
-                mesh.scale.set(1.2, 1.2, 1.2);
                 mesh.castShadow = true;
                 mesh.receiveShadow = true;
-                
-                this.joints.base_link_upper.position.set(40, 5, 40);
-                this.joints.base_link_upper.add(mesh);
+                this.joints.base.add(mesh);
                 this.parts.base_link_upper = mesh;
-                
-                console.log('Base link upper loaded into joint');
+                console.log('Base link upper loaded');
                 resolve(mesh);
             }, undefined, reject);
         });
@@ -186,8 +174,10 @@ class RobotArm {
                 this.joints.elbow.position.set(0, 130, 0);
                 this.joints.shoulder.add(this.joints.elbow);
                 mesh.position.set(0, 0, 0);
+                
                 mesh.rotation.x = -Math.PI / 2;
                 mesh.scale.set(1.2, 1.2, 1.2);
+
                 mesh.castShadow = true;
                 mesh.receiveShadow = true;
                 this.joints.elbow.add(mesh);
@@ -203,10 +193,12 @@ class RobotArm {
             this.loader.load('models/arm_link_3.stl', (geometry) => {
                 const mesh = new THREE.Mesh(geometry, this.materials.wrist); // ПРОМЕНЕТО
                 
+                // ПОПРАВКА: Зглобот директно на крајот од лакот
                 this.joints.wrist.position.set(0, 120, 15);
                 this.joints.elbow.add(this.joints.wrist);
                 
                 mesh.position.set(0, 0, 0);
+           
                 mesh.rotation.y = -Math.PI / 2;
                 mesh.scale.set(1.2, 1.2, 1.2);
                 mesh.castShadow = true;
@@ -218,6 +210,7 @@ class RobotArm {
             }, undefined, reject);
         });
     }
+
 
     // ----------------- Gripper -----------------
     loadGripperComponents() {
@@ -234,6 +227,7 @@ class RobotArm {
                 this.joints.gripper.add(mesh);
                 this.parts.gripper_base = mesh;
 
+                // Повик за секој дел на грабнувачот
                 this.loadGripperLink().then(() => {
                     return this.loadGripperPartLeft();
                 }).then(() => {
@@ -248,7 +242,7 @@ class RobotArm {
     loadGripperLink() {
         return new Promise((resolve, reject) => {
             this.loader.load('models/gripper_link.stl', (geometry) => {
-                const mesh = new THREE.Mesh(geometry, this.materials.darkMetal); // ПРОМЕНЕТО
+                const mesh = new THREE.Mesh(geometry, this.materials.darkMetal);
                 mesh.position.set(0, 0, 0);
                 mesh.rotation.set(Math.PI/2, Math.PI/2, 0);
                 mesh.scale.set(1.2, 1.2, 1.2);
@@ -266,7 +260,7 @@ class RobotArm {
         return new Promise((resolve, reject) => {
             this.loader.load('models/gripper_part_left.stl', (geometry) => {
                 const mesh = new THREE.Mesh(geometry, this.materials.gripper);
-                mesh.position.set(-3.25, 5, 0);
+                mesh.position.set(-3.25, 5, 0); // почетна позиција (ќе се прилагоди во updateGripper)
                 mesh.rotation.set(Math.PI / 2, 0, -Math.PI / 2);
                 mesh.scale.set(1.2, 1.2, 1.2);
                 mesh.castShadow = true;
@@ -282,7 +276,7 @@ class RobotArm {
         return new Promise((resolve, reject) => {
             this.loader.load('models/gripper_part_right.stl', (geometry) => {
                 const mesh = new THREE.Mesh(geometry, this.materials.gripper);
-                mesh.position.set(3.25, 0, 0);
+                mesh.position.set(3.25, 0, 0); // почетна позиција (ќе се прилагоди во updateGripper)
                 mesh.rotation.set(Math.PI / 2, Math.PI, -Math.PI / 2);
                 mesh.scale.set(1.2, 1.2, 1.2);
                 mesh.castShadow = true;
@@ -295,59 +289,54 @@ class RobotArm {
     }
     
     updateGripper(opening) {
+        // Ограничување 0-1
         const normalized = Math.max(0, Math.min(1, opening));
-        const maxOpening = 10;
+        const maxOpening = 10; // колку се движат надвор кога е fully open
     
         if (this.parts.gripper_part_left && this.parts.gripper_part_right) {
-            const fullyClosedLeft = -0.5;
-            const fullyClosedRight = 0.5;
+            // При fully closed (opening = 0) левиот и десниот дел се на иста линија
+            const fullyClosedLeft = -0.5;  // поместување кон левата страна
+            const fullyClosedRight = 0.5;  // поместување кон десната страна
     
+            // Позиции се пресметуваат
             this.parts.gripper_part_left.position.x = fullyClosedLeft - normalized * (maxOpening / 2);
             this.parts.gripper_part_right.position.x = fullyClosedRight + normalized * (maxOpening / 2);
         }
     }
-
+    
     // ----------------- Joint control -----------------
     setJointAngles(angles) {
-        console.log('Setting angles:', angles);
-        
         if (angles.base !== undefined) {
             this.angles.base = angles.base;
             this.joints.base.rotation.y = angles.base;
         }
-        
-        if (angles.base_link_upper !== undefined) {
+        if(angles.base_link_upper !== undefined){
             this.angles.base_link_upper = angles.base_link_upper;
-            if (this.joints.base_link_upper) {
-                this.joints.base_link_upper.rotation.y = angles.base_link_upper;
-                console.log('Base link upper rotated to:', THREE.MathUtils.radToDeg(angles.base_link_upper).toFixed(1) + '°');
-            }
+            this.joints.base_link_upper.rotation.x = angles.base_link_upper;
         }
-        
         if (angles.shoulder !== undefined) {
             this.angles.shoulder = angles.shoulder;
             this.joints.shoulder.rotation.z = angles.shoulder;
         }
-        
         if (angles.elbow !== undefined) {
             this.angles.elbow = angles.elbow;
             this.joints.elbow.rotation.z = angles.elbow;
         }
-        
         if (angles.wristX !== undefined) {
             this.angles.wristX = angles.wristX;
-            this.joints.wrist.rotation.x = angles.wristX;
+            this.joints.wrist.rotation.x = angles.wristX; // pitch - нагоре/надолу
         }
         
         if (angles.wristY !== undefined) {
             this.angles.wristY = angles.wristY;
-            this.joints.wrist.rotation.y = angles.wristY;
+            this.joints.wrist.rotation.y = angles.wristY; // yaw - лево/десно
         }
         
         if (angles.wristZ !== undefined) {
             this.angles.wristZ = angles.wristZ;
-            this.joints.wrist.rotation.z = angles.wristZ;
+            this.joints.wrist.rotation.z = angles.wristZ; // roll - вртење околу оска
         }
+        
         
         if (angles.gripper !== undefined) {
             this.angles.gripper = angles.gripper;
@@ -357,16 +346,7 @@ class RobotArm {
     }
 
     resetPose() {
-        this.setJointAngles({ 
-            base: 0, 
-            base_link_upper: 0,
-            shoulder: 0, 
-            elbow: 0, 
-            wristX: 0,
-            wristY: 0,
-            wristZ: 0,
-            gripper: 0.5 
-        });
+        this.setJointAngles({ base:0, shoulder:0, elbow:0, wrist:0, gripper:0.5 });
     }
 
     getEndEffectorPosition() {
@@ -394,9 +374,9 @@ class RobotArm {
         if(jointAnglesElement){
             jointAnglesElement.innerHTML = `
                 <div>Основа: ${(THREE.MathUtils.radToDeg(this.angles.base)).toFixed(1)}°</div>
-                <div>Горна основа: ${(THREE.MathUtils.radToDeg(this.angles.base_link_upper)).toFixed(1)}°</div>
                 <div>Рамо: ${(THREE.MathUtils.radToDeg(this.angles.shoulder)).toFixed(1)}°</div>
                 <div>Лакот: ${(THREE.MathUtils.radToDeg(this.angles.elbow)).toFixed(1)}°</div>
+                <div>Зглоб: ${(THREE.MathUtils.radToDeg(this.angles.wrist)).toFixed(1)}°</div>
                 <div>Грабнувач: ${(this.angles.gripper*100).toFixed(0)}%</div>
             `;
         }
@@ -439,9 +419,9 @@ class RobotArm {
             this.angles.base,
             this.angles.shoulder,
             this.angles.elbow,
-            this.angles.wristX,
-            this.angles.wristY,
-            this.angles.wristZ
+            this.angles.wrist,
+            0,
+            0
         ];
     }
 }
